@@ -1,0 +1,411 @@
+:root {
+    --bg: #0d1a12;
+    --panel: #17291e;
+    --panel-edge: #2b4a36;
+    --text: #e8f1e4;
+    --muted: #8aa892;
+    --accent: #f2c14e;
+    --active: #3f7d4f;
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        color-scheme: dark;
+    }
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#app {
+    height: 100%;
+}
+
+.loading-progress {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    width: 8rem;
+    height: 8rem;
+    margin: -4rem 0 0 -4rem;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 8px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--panel-edge);
+    flex-wrap: wrap;
+}
+
+.topbar h1 {
+    font-size: 20px;
+    margin: 0;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+
+.stat {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.stat strong {
+    color: var(--text);
+    margin-left: 4px;
+}
+
+.actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+button {
+    background: #223d2b;
+    color: var(--text);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font: inherit;
+}
+
+button:hover {
+    background: #2b4d37;
+}
+
+.workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 56px 1fr 280px;
+    min-height: 0;
+    position: relative;
+}
+
+.panel {
+    background: var(--panel);
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.panel h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin: 16px 0 6px;
+}
+
+.panel h2:first-child {
+    margin-top: 0;
+}
+
+.tool {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.tool.active {
+    background: var(--active);
+    border-color: var(--accent);
+}
+
+.tool .label {
+    flex: 1;
+}
+
+.tool .cost {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    flex: none;
+}
+
+.map {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.map canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+    user-select: none;
+}
+
+/* Icon rail on the left: one icon per tool group. Clicking an icon opens its flyout over the map. */
+.rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    background: var(--panel);
+    border-right: 1px solid var(--panel-edge);
+    overflow-y: auto;
+}
+
+.rail-btn {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.rail-btn.active {
+    background: var(--active);
+    border-color: var(--accent);
+}
+
+/* A group's tools, shown over the left edge of the map. The map keeps its full width underneath. */
+.flyout {
+    position: absolute;
+    left: 56px;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+    z-index: 20;
+    box-shadow: 6px 0 18px rgba(0, 0, 0, 0.4);
+}
+
+.flyout-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flyout-head h2 {
+    margin-bottom: 6px;
+}
+
+/* With no tool selected the pointer is a plain arrow. The crosshair shows only while building. */
+.map canvas.idle {
+    cursor: default;
+}
+
+.hole-popup {
+    position: absolute;
+    display: none;
+    width: 230px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    z-index: 5;
+}
+
+.popup-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.popup-close {
+    padding: 0 8px;
+    line-height: 1.4;
+}
+
+.details td {
+    padding: 3px 4px;
+}
+
+.devcheck {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.hint,
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.message {
+    color: var(--accent);
+    margin-top: 14px;
+    font-size: 14px;
+    min-height: 1.4em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--panel-edge);
+}
+
+/* Blazor shows this bar only when an unhandled error happens. It must start hidden. */
+#blazor-error-ui {
+    background: #5c2a1f;
+    color: var(--text);
+    bottom: 0;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .reload {
+    color: var(--accent);
+    margin-left: 0.5rem;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .app {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 60vh auto;
+    }
+}
+
+/* Top menu bar: each menu's items show only while the pointer is over the menu. */
+.menubar {
+    display: flex;
+    gap: 4px;
+}
+
+.menu {
+    position: relative;
+}
+
+.menu-title {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.menu-items {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    padding: 6px 4px 4px;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+    z-index: 20;
+}
+
+.menu:hover .menu-items {
+    display: flex;
+}
+
+.menu-items button {
+    width: 100%;
+    text-align: left;
+}
+
+/* Icon buttons, such as the angled turn arrows. */
+.icon-btn {
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+}
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* The current action, in a small window in the upper left of the map. */
+.action-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px;
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+.action-label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.action-badge strong {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* With a flyout open, the action box moves to sit just past it, so the flyout doesn't cover it. */
+.action-badge.beside-flyout {
+    left: 240px;
+}
